@@ -41,6 +41,7 @@ const ContainerChat = styled('div', {
     justifyContent: 'start',
     gap: '10px',
     marginBottom: '10px',
+
     
     '&:hover': {
         opacity: '0.8'

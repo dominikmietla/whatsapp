@@ -15,9 +15,10 @@ const [user] = useAuthState(auth)
             <Head>
                 <title>Chat with {getRecipientEmail(chat.users, user)}</title>
             </Head>
+       
             <Sidebar />
             <ChatContainer>
-                <ChatScreen/>
+                <ChatScreen chat={chat} messages={messages}/>
             </ChatContainer>
 
         </Container>
@@ -28,11 +29,14 @@ export default Chat
 
 export async function getServerSideProps(context){
     const ref = db.collection('chats').doc(context.query.id);
-    const messageRes = await ref.collection('message').orderBy('timestamp', 'asc').get();
-    const messages = messageRes.docs.map(doc => ({
+
+    //prepare messages
+    const messagesRes = await ref.collection('messages').orderBy('timestamp', 'asc').get();
+
+    const messages = messagesRes.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-    })).map(messages => ({
+    })).map((messages) => ({
         ...messages,
         timestamp: messages.timestamp.toDate().getTime()
     }))
@@ -46,7 +50,7 @@ export async function getServerSideProps(context){
 
     return{
         props: {
-            message: JSON.stringify(messages),
+            messages: JSON.stringify(messages),
             chat: chat
         }
     }

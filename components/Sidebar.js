@@ -13,8 +13,6 @@ import ChatComponent from './ChatComponent';
 import Image from 'next/image';
 
 
-
-
 function Sidebar() {
     const [user] = useAuthState(auth);
     const userChatRef = db.collection('chats').where('users', 'array-contains', user.email);
@@ -29,7 +27,6 @@ function Sidebar() {
             db.collection('chats').add({
                  users: [user.email, input]
             })
-    
         }
     };
 
@@ -47,6 +44,7 @@ function Sidebar() {
                          {/* zastosować komponent Image, (problem z domeną sprawdzić next.config.js) */}
                 {user.photoURL ? 
                     <AdminImage 
+                    onClick={() => auth.signOut()}
                     src={user.photoURL}
                     alt="Picture of the author"/>
                     : 
