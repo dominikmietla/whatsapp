@@ -1,4 +1,3 @@
-import { MessageSharp } from '@mui/icons-material';
 import {styled} from '@stitches/react';
 import Head from 'next/head';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -27,34 +26,38 @@ const [user] = useAuthState(auth)
 
 export default Chat
 
-export async function getServerSideProps(context){
-    const ref = db.collection('chats').doc(context.query.id);
-
-    //prepare messages
-    const messagesRes = await ref.collection('messages').orderBy('timestamp', 'asc').get();
-
-    const messages = messagesRes.docs.map((doc) => ({
+export async function getServerSideProps(context) {
+    const ref = db.collection("chats").doc(context.query.id);
+  
+    const messagesRef = await ref
+      .collection("messages")
+      .orderBy("timestamp", "asc")
+      .get();
+  
+    const messages = messagesRef.docs
+      .map((doc) => ({
         id: doc.id,
         ...doc.data(),
-    })).map((messages) => ({
+      }))
+      .map((messages) => ({
         ...messages,
-        timestamp: messages.timestamp.toDate().getTime()
-    }))
-
-    //prepare chats
-    const chatRes = await ref.get();
+        timestamp: messages.timestamp.toDate().getTime(),
+      }));
+  
+    const chatRef = await ref.get();
+  
     const chat = {
-        id: chatRes.id,
-        ...chatRes.data()
-    }
-
-    return{
-        props: {
-            messages: JSON.stringify(messages),
-            chat: chat
-        }
-    }
-}
+      id: chatRef.id,
+      ...chatRef.data(),
+    };
+  
+    return {
+      props: {
+        messages: JSON.stringify(messages),
+        chat: chat,
+      },
+    };
+  }
 
 const Container = styled('div', {
     display: 'flex',
