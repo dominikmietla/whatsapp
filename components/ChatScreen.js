@@ -10,6 +10,8 @@ import firebase from "firebase/compat/app";
 import getRecipientEmail from '../utils/getRecipientEmail';
 import TimeAgo from 'timeago-react';
 import SendIcon from '@mui/icons-material/Send';
+import Link from 'next/link';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 function ChatScreen({chat, messages}){
@@ -98,8 +100,9 @@ function ChatScreen({chat, messages}){
                     ) : (
                         <p>Loading last active ..</p>
                     )}
+                 
                 </HeaderInformation>
-
+                <Link href="/"><CloseIcon /></Link>
                 <HeaderIcons>
                     
                 </HeaderIcons>
@@ -160,8 +163,14 @@ resize: 'vertical',
 const Container = styled('div', {
     height: '100vh',
     display: 'block',
-    position: 'relative',
+    position: 'absolute',
+    left: '0',
+    width: '100vw',
+    backgroundColor: 'rgb(10, 25, 41)',
+
+
 });
+
 const Header = styled('div', {
     display: 'flex',
     position: 'sticky',

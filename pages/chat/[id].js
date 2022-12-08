@@ -14,7 +14,6 @@ const [user] = useAuthState(auth)
             <Head>
                 <title>Chat with {getRecipientEmail(chat.users, user)}</title>
             </Head>
-       
             <Sidebar />
             <ChatContainer>
                 <ChatScreen chat={chat} messages={messages}/>
