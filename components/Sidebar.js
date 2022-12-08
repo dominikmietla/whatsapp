@@ -7,6 +7,82 @@ import SearchIcon from '@mui/icons-material/Search';
 import * as EmailValidator from 'email-validator';
 import Tooltip from '@mui/material/Tooltip';
 import {auth , db} from '../firebase';
+import { useCollection } from 'react-firebase-hooks/firestore'
+import { useAuthState } from 'react-firebase-hooks/auth';
+import ChatComponent from './ChatComponent';
+import Image from 'next/image';
+
+
+
+
+function Sidebar() {
+    const [user] = useAuthState(auth);
+    const userChatRef = db.collection('chats').where('users', 'array-contains', user.email);
+    const [chatsSnapshot] = useCollection(userChatRef);
+
+    const createChat = () => {
+        const input = prompt('enter adres email for user you with to chat');
+        if (!input) 
+            return null;
+        if (EmailValidator.validate(input) && !chatAlreadyExists(input) && input !== user.email) {
+            // we need to add the chat into db chats collection
+            db.collection('chats').add({
+                 users: [user.email, input]
+            })
+    
+        }
+    };
+
+    const chatAlreadyExists = (recipientEmail) => {
+       !!chatsSnapshot?.docs.find(
+           (chat) => 
+           chat.data().users.find((user) => user === recipientEmail)?.length > 0
+        );
+    }
+    
+    return (
+        <Container>
+            <Header>
+                <Tooltip title="Log out">
+                         {/* zastosować komponent Image, (problem z domeną sprawdzić next.config.js) */}
+                {user.photoURL ? 
+                    <AdminImage 
+                    src={user.photoURL}
+                    alt="Picture of the author"/>
+                    : 
+                    <UseAvatar  onClick={() => auth.signOut()}/>
+                }
+                  
+                </Tooltip>
+                <IconsContainer>
+                    <IconButton >
+                        <ChatMaterialIcon/>
+                    </IconButton>
+                    <IconButton >
+                        <MoreVert/>
+                    </IconButton>
+
+                </IconsContainer>
+            </Header>
+            <Search>
+                <SearchIcon/>
+                <SearchInput placeholder='search in chats'/>
+            </Search>
+
+            <SidebarButton onClick={createChat}>new chat</SidebarButton>
+            {/* list of chats */}
+            {chatsSnapshot?.docs.map((chat) => (
+                <ChatComponent key={chat.id} id={chat.id} users={chat.data().users} />
+            ))}
+        </Container>
+    );
+}
+
+const AdminImage = styled('img', {
+    width: '50px',
+    height: '50px',
+    borderRadius: '50%'
+});
 
 const Container = styled('div', {});
 
@@ -49,7 +125,7 @@ const UseAvatar = styled(AccountCircleIcon, {
         opacity: '0.8'
     }
 });
-const Chat = styled(ChatIcon, {
+const ChatMaterialIcon = styled(ChatIcon, {
     margin: '10px',
     cursor: 'pointer',
     color: '#fff',
@@ -78,45 +154,5 @@ const SidebarButton = styled('button', {
     textTransform: 'uppercase',
     margin: '33px 33px'
 });
-
-const createChat = () => {
-    const input = prompt('enter adres email for user you with to chat');
-
-    if (!input) 
-        return null;
-    
-    if (EmailValidator.validate(input)) {
-        // we need to add the chat into db chats collection
-
-    }
-
-}
-
-function Sidebar() {
-    return (
-        <Container>
-            <Header>
-                <Tooltip title="Log out">
-                    <UseAvatar onClick={() => auth.signOut()}/>
-                </Tooltip>
-                <IconsContainer>
-                    <IconButton >
-                        <Chat/>
-                    </IconButton>
-                    <IconButton >
-                        <MoreVert/>
-                    </IconButton>
-
-                </IconsContainer>
-            </Header>
-            <Search>
-                <SearchIcon/>
-                <SearchInput placeholder='search in chats'/>
-            </Search>
-
-            <SidebarButton onClick={createChat}>new chat</SidebarButton>
-        </Container>
-    )
-}
-
 export default Sidebar;
+
