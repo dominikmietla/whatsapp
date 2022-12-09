@@ -211,6 +211,7 @@ const MessageContainer = styled('div', {
     padding: '10px',
     position: 'absolute',
     bottom: '0',
+    width: '100vw',
 
     '&::before': {
         content: `''`,
