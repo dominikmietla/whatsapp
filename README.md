@@ -1,3 +1,23 @@
+
+# WhatsApp 
+The main intention for me to create this project is for learning Next JS.
+
+# Current Features :
+
+```bash
+Login & Logout with google
+Add Chat
+yarn dev
+```
+# Upcoming Features :
+```bash
+Search Chat
+Delete Chat
+Chat with individual user
+Send Emoji's
+Auto scroll to last message
+```
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
